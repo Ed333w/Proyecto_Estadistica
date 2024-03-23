@@ -1,3 +1,5 @@
+
+#== Instalación de paquetes para la lecutra de datos en R usando "tidyverse" como el paquete principal
 install.packages("tidyverse")
 install.packages("dplyr")
 install.packages("modeest")
