@@ -1,4 +1,4 @@
+
 library(tidyverse)
-library(dplyr)
-library(modeest)
-library(psych)
+
+gem = read.table("twins.txt", header = TRUE, sep=",")
