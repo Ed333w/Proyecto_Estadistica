@@ -1,7 +1,7 @@
 library(shiny)
 library(tidyverse)
 
-# Define UI
+
 ui <- fluidPage(
   titlePanel("Wage Plot"),
   sidebarLayout(
@@ -18,23 +18,23 @@ ui <- fluidPage(
   )
 )
 
-# Define server logic
+
 server <- function(input, output, session) {
   
-  # Load data
+
   filtered_data <- reactive({
     req(file.exists("filtered_data.csv"))
     read.csv("filtered_data.csv", header = TRUE)
   })
   
-  # Filter data based on user inputs
+
   filtered_data_reactive <- reactive({
     req(filtered_data())
     filtered_data() %>%
       filter(AGE >= input$age_range[1] & AGE <= input$age_range[2])
   })
   
-  # Render the boxplot
+
   output$boxplot <- renderPlot({
     req(filtered_data_reactive())
     ggplot(filtered_data_reactive(), aes_string(x = NULL, y = input$variable)) +
@@ -43,7 +43,7 @@ server <- function(input, output, session) {
            x = NULL, y = input$variable)
   })
   
-  # Download filtered data
+
   output$downloadData <- downloadHandler(
     filename = function() {
       paste("filtered_data_", Sys.Date(), ".csv", sep = "")
@@ -55,7 +55,7 @@ server <- function(input, output, session) {
   )
 }
 
-# Run the application
+
 shinyApp(ui = ui, server = server)
 
 
