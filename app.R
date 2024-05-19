@@ -1,20 +1,16 @@
-library(shiny)
-library(tidyverse)
-library(shinythemes)
-
 # Define UI
 ui <- navbarPage(
-  title = "Wage Analysis App",
-  theme = shinytheme("cerulean"), # Apply a theme
+  title = "Analisis Salarial",
+  theme = shinytheme("cyborg"), # Use a dark theme for better contrast
   
   tabPanel("Wage Plot",
            sidebarLayout(
              sidebarPanel(
-               selectInput("variable", "Select Variable:", 
+               selectInput("variable", "Seleccione el Gemelo:", 
                            choices = c("HRWAGEL", "HRWAGEH"), selected = "HRWAGEL"),
-               sliderInput("age_range", "Filter by Age:",
+               sliderInput("age_range", "Filtrar por Edad:",
                            min = 0, max = 100, value = c(0, 100), step = 1),
-               downloadButton("downloadData", "Download Filtered Data", class = "btn-primary")
+               downloadButton("downloadData", " Datos Filtrados", class = "btn-primary")
              ),
              mainPanel(
                plotOutput("boxplot")
@@ -22,20 +18,31 @@ ui <- navbarPage(
            )
   ),
   
-  tabPanel("About",
+  tabPanel("Datos en Crudo",
            fluidPage(
              h3("About This App"),
              p("This app allows users to visualize wage data and filter it based on age range.")
            )
   ),
   
+  tabPanel("Analisis Númerico",
+           fluidPage(
+             h3("Análisis Numérico"),
+             p("En esta sección se proporciona un análisis numérico de los datos salariales.")
+           )
+  ),
+  
   tags$style(HTML("
-    .navbar { background-color: #004c99; }
+    body { background-color: #000; color: #fff; }
+    .navbar { background-color: #1a1a1a; }
     .navbar-brand { color: #fff !important; }
     .navbar-nav > li > a { color: #fff !important; }
-    .btn-primary { background-color: #004c99; border-color: #004c99; }
-    h3 { color: #004c99; }
-    p { color: #333; }
+    .btn-primary { background-color: #1a1a1a; border-color: #1a1a1a; color: #fff; }
+    .sidebarPanel, .mainPanel { background-color: #333; }
+    h3, p, label, .control-label, .shiny-input-container { color: #fff; }
+    .slider-animate-container, .irs-single, .irs-bar-edge, .irs-bar { background: #666; border-color: #666; }
+    .irs-line { border: 1px solid #999; }
+    .irs-grid-text, .irs-min, .irs-max { color: #999; }
   "))
 )
 
@@ -58,10 +65,26 @@ server <- function(input, output, session) {
   # Render the boxplot
   output$boxplot <- renderPlot({
     req(filtered_data_reactive())
+    
+    boxplot_color <- ifelse(input$variable == "HRWAGEL", "skyblue", "orange")
+    
     ggplot(filtered_data_reactive(), aes_string(x = NULL, y = input$variable)) +
-      geom_boxplot(fill = "skyblue", color = "black") +
+      geom_boxplot(fill = boxplot_color, color = "black", outlier.colour = "white") +
       labs(title = paste("Wage Plot of", input$variable),
-           x = NULL, y = input$variable)
+           x = NULL, y = input$variable) +
+      theme_minimal(base_size = 15) +
+      theme(
+        plot.background = element_rect(fill = "#000000", color = NA),
+        panel.background = element_rect(fill = "#000000", color = NA),
+        panel.grid.major = element_line(color = "#333333"),
+        panel.grid.minor = element_line(color = "#222222"),
+        axis.text = element_text(color = "#ffffff"),
+        axis.title = element_text(color = "#ffffff"),
+        plot.title = element_text(color = "#ffffff", size = 20, face = "bold"),
+        legend.background = element_rect(fill = "#000000"),
+        legend.key = element_rect(fill = "#000000", color = NA),
+        legend.text = element_text(color = "#ffffff")
+      )
   })
   
   # Download filtered data
@@ -78,4 +101,8 @@ server <- function(input, output, session) {
 
 # Run the application
 shinyApp(ui = ui, server = server)
+
+
+
+
 
