@@ -2,19 +2,29 @@ library(shiny)
 library(tidyverse)
 
 # Define UI
-ui <- fluidPage(
-  titlePanel("Wage Plot"),
-  sidebarLayout(
-    sidebarPanel(
-      selectInput("variable", "Seleciona el gemelo:", 
-                  choices = c("HRWAGEL", "HRWAGEH"), selected = "HRWAGEL"),
-      sliderInput("age_range", "filtrar por edad:",
-                  min = 0, max = 100, value = c(0, 100), step = 1),
-      downloadButton("downloadData", "Download Filtered Data")
-    ),
-    mainPanel(
-      plotOutput("boxplot")
-    )
+ui <- navbarPage(
+  "Wage Analysis App", # Title of the navbar
+  
+  tabPanel("Wage Plot", # First tab panel
+           sidebarLayout(
+             sidebarPanel(
+               selectInput("variable", "Select Variable:", 
+                           choices = c("HRWAGEL", "HRWAGEH"), selected = "HRWAGEL"),
+               sliderInput("age_range", "Filter by Age:",
+                           min = 0, max = 100, value = c(0, 100), step = 1),
+               downloadButton("downloadData", "Download Filtered Data")
+             ),
+             mainPanel(
+               plotOutput("boxplot")
+             )
+           )
+  ),
+  
+  tabPanel("About", # Second tab panel
+           fluidPage(
+             h3("About This App"),
+             p("This app allows users to visualize wage data and filter it based on age range.")
+           )
   )
 )
 
@@ -39,7 +49,7 @@ server <- function(input, output, session) {
     req(filtered_data_reactive())
     ggplot(filtered_data_reactive(), aes_string(x = NULL, y = input$variable)) +
       geom_boxplot(fill = "skyblue", color = "black") +
-      labs(title = paste("Wage plot de", input$variable),
+      labs(title = paste("Wage Plot of", input$variable),
            x = NULL, y = input$variable)
   })
   
