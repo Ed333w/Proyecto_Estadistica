@@ -20,8 +20,13 @@ ui <- navbarPage(
   
   tabPanel("Datos en Crudo",
            fluidPage(
-             h3("About This App"),
-             p("This app allows users to visualize wage data and filter it based on age range.")
+             h3("Analísis de la base de datos"),
+             p("Usamos las herramientas de analsis de datos de tidyverse para
+               hacer los filtros y la limpieza de datos:"),
+             verbatimTextOutput("raw_output"),
+             br(),
+             h3("Datos Filtrados"),
+             tableOutput("filtered_table")
            )
   ),
   
@@ -45,6 +50,8 @@ ui <- navbarPage(
     .irs-grid-text, .irs-min, .irs-max { color: #999; }
   "))
 )
+
+
 
 # Define server logic
 server <- function(input, output, session) {
@@ -97,6 +104,37 @@ server <- function(input, output, session) {
       write.csv(filtered, file, row.names = FALSE)
     }
   )
+  
+  output$raw_output <- renderPrint({
+    raw <- read.table("twins.txt", header = TRUE, sep = ",")
+    
+    cat("Numero de registros (rows):", nrow(raw), "\n")
+    cat("Numero de variables (columns):", ncol(raw), "\n")
+    
+    gem <- read.table("twins.txt", header = TRUE, sep = ",", dec = ".", na.strings = ".")
+    
+    # Define la filtración por variables
+    filters <- c("DLHRWAGE", "AGE", "DEDUC1", "AGESQ", "HRWAGEH", "WHITEH", 
+                 "MALEH", "EDUCH", "HRWAGEL", "WHITEL", "MALEL", "EDUCL", 
+                 "DEDUC2", "DTEN", "DMARRIED", "DUNCOV")
+    
+    # Limpieza de datos
+    # Eliminar los datos que contengan valores vacíos
+    filtered_data <- gem %>%
+      filter(across(all_of(filters), ~(!is.na(.) & (nchar(as.character(.)) > 1 | . != "."))))
+    
+    cat("Número de registros con información completa:", nrow(filtered_data), "\n")
+  })
+  
+  output$filtered_table <- renderTable({
+    filtered_data <- gem %>%
+      filter(across(all_of(filters), ~(!is.na(.) & (nchar(as.character(.)) > 1 | . != "."))))
+    
+    filtered_data
+  })
+  
+  
+
 }
 
 # Run the application
