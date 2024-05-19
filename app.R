@@ -1,4 +1,7 @@
 # Define UI
+library(shiny)
+library(tidyverse)
+library(shinythemes)
 ui <- navbarPage(
   title = "Analisis Salarial",
   theme = shinytheme("cyborg"), # Use a dark theme for better contrast
