@@ -1,18 +1,20 @@
 library(shiny)
 library(tidyverse)
+library(shinythemes)
 
 # Define UI
 ui <- navbarPage(
-  "Wage Analysis App", # Title of the navbar
+  title = "Wage Analysis App",
+  theme = shinytheme("cerulean"), # Apply a theme
   
-  tabPanel("Wage Plot", # First tab panel
+  tabPanel("Wage Plot",
            sidebarLayout(
              sidebarPanel(
                selectInput("variable", "Select Variable:", 
                            choices = c("HRWAGEL", "HRWAGEH"), selected = "HRWAGEL"),
                sliderInput("age_range", "Filter by Age:",
                            min = 0, max = 100, value = c(0, 100), step = 1),
-               downloadButton("downloadData", "Download Filtered Data")
+               downloadButton("downloadData", "Download Filtered Data", class = "btn-primary")
              ),
              mainPanel(
                plotOutput("boxplot")
@@ -20,12 +22,21 @@ ui <- navbarPage(
            )
   ),
   
-  tabPanel("About", # Second tab panel
+  tabPanel("About",
            fluidPage(
              h3("About This App"),
              p("This app allows users to visualize wage data and filter it based on age range.")
            )
-  )
+  ),
+  
+  tags$style(HTML("
+    .navbar { background-color: #004c99; }
+    .navbar-brand { color: #fff !important; }
+    .navbar-nav > li > a { color: #fff !important; }
+    .btn-primary { background-color: #004c99; border-color: #004c99; }
+    h3 { color: #004c99; }
+    p { color: #333; }
+  "))
 )
 
 # Define server logic
@@ -67,8 +78,4 @@ server <- function(input, output, session) {
 
 # Run the application
 shinyApp(ui = ui, server = server)
-
-
-
-
 
