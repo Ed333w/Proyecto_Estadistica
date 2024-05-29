@@ -135,10 +135,75 @@ server <- function(input, output, session) {
     
     filtered_data
   })
-  
+
+  output$num_analysis<-renderPrint({
+    calculate_mode <- function(x) {
+      na_removed <- x[!is.na(x)]
+      uniqx <- unique(na_removed)
+      uniqx[which.max(tabulate(match(na_removed, uniqx)))]
+    }
+    
+    # HRWAGEL
+    media_HRWAGEL <- mean(gem$HRWAGEL, na.rm = TRUE)
+    mediana_HRWAGEL <- median(gem$HRWAGEL, na.rm = TRUE)
+    moda_HRWAGEL <- calculate_mode(gem$HRWAGEL)
+    rango_HRWAGEL <- range(gem$HRWAGEL, na.rm = TRUE)
+    varianza_HRWAGEL <- var(gem$HRWAGEL, na.rm = TRUE)
+    sd_HRWAGEL <- sd(gem$HRWAGEL, na.rm = TRUE)
+    cv_HRWAGEL <- (sd_HRWAGEL / media_HRWAGEL) * 100
+    q1_HRWAGEL <- quantile(gem$HRWAGEL, 0.25, na.rm = TRUE)
+    q2_HRWAGEL <- quantile(gem$HRWAGEL, 0.5, na.rm = TRUE) # same as median
+    q3_HRWAGEL <- quantile(gem$HRWAGEL, 0.75, na.rm = TRUE)
+    min_HRWAGEL <- min(gem$HRWAGEL, na.rm = TRUE)
+    max_HRWAGEL <- max(gem$HRWAGEL, na.rm = TRUE)
+
+      # HRWAGEH
+    media_HRWAGEH <- mean(gem$HRWAGEH, na.rm = TRUE)
+    mediana_HRWAGEH <- median(gem$HRWAGEH, na.rm = TRUE)
+    moda_HRWAGEH <- calculate_mode(gem$HRWAGEH)
+    rango_HRWAGEH <- range(gem$HRWAGEH, na.rm = TRUE)
+    varianza_HRWAGEH <- var(gem$HRWAGEH, na.rm = TRUE)
+    sd_HRWAGEH <- sd(gem$HRWAGEH, na.rm = TRUE)
+    cv_HRWAGEH <- (sd_HRWAGEH / media_HRWAGEH) * 100
+    q1_HRWAGEH <- quantile(gem$HRWAGEH, 0.25, na.rm = TRUE)
+    q2_HRWAGEH <- quantile(gem$HRWAGEH, 0.5, na.rm = TRUE) # same as median
+    q3_HRWAGEH <- quantile(gem$HRWAGEH, 0.75, na.rm = TRUE)
+    min_HRWAGEH <- min(gem$HRWAGEH, na.rm = TRUE)
+    max_HRWAGEH <- max(gem$HRWAGEH, na.rm = TRUE)
+    
+    cat("HRWAGEL:\n")
+    cat("Media:", media_HRWAGEL, "\n")
+    cat("Mediana:", mediana_HRWAGEL, "\n")
+    cat("Moda:", moda_HRWAGEL, "\n")
+    cat("Rango:", rango_HRWAGEL, "\n")
+    cat("Varianza:", varianza_HRWAGEL, "\n")
+    cat("Desviación Estandar:", sd_HRWAGEL, "\n")
+    cat("Coeficiente de Variación:", cv_HRWAGEL, "%\n")
+    cat("Q1:", q1_HRWAGEL, "\n")
+    cat("Q2:", q2_HRWAGEL, "\n")
+    cat("Q3:", q3_HRWAGEL, "\n")
+    cat("Min:", min_HRWAGEL, "\n")
+    cat("Max:", max_HRWAGEL, "\n\n")
+    
+    cat("HRWAGEH:\n")
+    cat("Media:", media_HRWAGEH, "\n")
+    cat("Mediana:", mediana_HRWAGEH, "\n")
+    cat("Moda:", moda_HRWAGEH, "\n")
+    cat("Rango:", rango_HRWAGEH, "\n")
+    cat("Varianza:", varianza_HRWAGEH, "\n")
+    cat("Desviación Estandar:", sd_HRWAGEH, "\n")
+    cat("Coeficiente de Variación:", cv_HRWAGEH, "%\n")
+    cat("Q1:", q1_HRWAGEH, "\n")
+    cat("Q2:", q2_HRWAGEH, "\n")
+    cat("Q3:", q3_HRWAGEH, "\n")
+    cat("Min:", min_HRWAGEH, "\n")
+    cat("Max:", max_HRWAGEH, "\n")
+  })
+
+
   
 
-}
+})
 
 # Run the application
 shinyApp(ui = ui, server = server)
